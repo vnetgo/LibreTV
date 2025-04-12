@@ -7,10 +7,10 @@ let currentEpisodeIndex = 0;
 let currentEpisodes = [];
 // 添加当前视频的标题
 let currentVideoTitle = '';
-// 新增全局变量用于倒序状态
+// 全局变量用于倒序状态
 let episodesReversed = false;
 
-// 新增：解析多个自定义API源
+// 解析多个自定义API源
 let customApiUrls = [];
 function parseCustomApiUrls() {
     if (!customApiUrl) return [];
@@ -130,7 +130,7 @@ async function updateSiteStatusWithTest(source) {
     }
 }
 
-// 新增：测试单个自定义API URL
+// 测试单个自定义API URL
 async function testCustomApiUrl(url) {
     if (!url) return false;
     
@@ -251,7 +251,7 @@ function setupEventListeners() {
         }
     });
     
-    // 新增：黄色内容过滤开关事件绑定
+    // 黄色内容过滤开关事件绑定
     const yellowFilterToggle = document.getElementById('yellowFilterToggle');
     if (yellowFilterToggle) {
         yellowFilterToggle.addEventListener('change', function(e) {
@@ -259,7 +259,7 @@ function setupEventListeners() {
         });
     }
     
-    // 新增：广告过滤开关事件绑定
+    // 广告过滤开关事件绑定
     const adFilterToggle = document.getElementById('adFilterToggle');
     if (adFilterToggle) {
         adFilterToggle.addEventListener('change', function(e) {
@@ -347,7 +347,7 @@ async function search() {
         const yellowFilterEnabled = localStorage.getItem('yellowFilterEnabled') === 'true';
         let results = data.list;
         if (yellowFilterEnabled) {
-            const banned = ['伦理片', '色情片','福利视频','福利片'];
+            const banned = ['伦理片', '色情片','同性片','福利视频','福利片'];
             results = results.filter(item => {
                 const typeName = item.type_name || '';
                 return !banned.some(keyword => typeName.includes(keyword));
@@ -412,10 +412,10 @@ async function search() {
                             </div>
                         </div>` : ''}
                         
-                        <!-- 内容区域 - 减小内边距 -->
+                        <!-- 内容区域 - 调整为适应多行标题 -->
                         <div class="p-3 flex flex-col flex-grow ${hasCover ? 'md:w-3/4' : 'w-full'}">
                             <div class="flex-grow">
-                                <h3 class="text-lg font-semibold mb-2 line-clamp-2">${safeName}</h3>
+                                <h3 class="text-lg font-semibold mb-2 break-words">${safeName}</h3>
                                 
                                 <!-- 添加影片元数据 - 使用原始彩色标签样式，但减小间距 -->
                                 <div class="flex flex-wrap gap-1 mb-2">
@@ -428,7 +428,7 @@ async function search() {
                                           ${item.vod_year}
                                       </span>` : ''}
                                 </div>
-                                <p class="text-gray-400 text-xs line-clamp-2">
+                                <p class="text-gray-400 text-xs h-9 overflow-hidden">
                                     ${(item.vod_remarks || '暂无介绍').toString().replace(/</g, '&lt;')}
                                 </p>
                             </div>
@@ -511,7 +511,8 @@ async function showDetails(id, vod_name, sourceCode = currentApiSource) {
         const sourceName = data.videoInfo && data.videoInfo.source_name ? 
             ` <span class="text-sm font-normal text-gray-400">(${data.videoInfo.source_name})</span>` : '';
         
-        modalTitle.innerHTML = (vod_name || '未知视频') + sourceName;
+        // 不对标题进行截断处理，允许完整显示
+        modalTitle.innerHTML = `<span class="break-words">${vod_name || '未知视频'}</span>${sourceName}`;
         currentVideoTitle = vod_name || '未知视频';
         
         // 保存当前源码以便后续操作
@@ -607,7 +608,7 @@ function handlePlayerError() {
     showToast('视频播放加载失败，请尝试其他视频源', 'error');
 }
 
-// 新增辅助函数用于渲染剧集按钮（使用当前的排序状态）
+// 辅助函数用于渲染剧集按钮（使用当前的排序状态）
 function renderEpisodes(vodName) {
     const episodes = episodesReversed ? [...currentEpisodes].reverse() : currentEpisodes;
     return episodes.map((episode, index) => {
@@ -622,7 +623,7 @@ function renderEpisodes(vodName) {
     }).join('');
 }
 
-// 新增切换排序状态的函数
+// 切换排序状态的函数
 function toggleEpisodeOrder() {
     episodesReversed = !episodesReversed;
     // 重新渲染剧集区域，使用 currentVideoTitle 作为视频标题
